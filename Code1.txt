@@ -1,0 +1,53 @@
+#include<iostream>
+#include<graphics.h>  // Include the graphics library
+using namespace std;
+
+// Function to implement DDA algorithm for line drawing
+void DDA(int x1, int y1, int x2, int y2) {
+    // Calculate dx and dy
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    // Calculate the number of steps
+    int steps = max(abs(dx), abs(dy));
+
+    // Calculate the increment for each step
+    float xIncrement = dx / (float) steps;
+    float yIncrement = dy / (float) steps;
+
+    // Initial point
+    float x = x1;
+    float y = y1;
+
+    // Draw pixels for each step
+    for (int i = 0; i <= steps; i++) {
+        putpixel(x, y, WHITE);  // Plot the pixel at (x, y)
+        x += xIncrement;  // Increment x
+        y += yIncrement;  // Increment y
+        delay(10);  // Small delay for visual effect
+    }
+}
+
+int main() {
+    // Initialize graphics mode
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x1, y1, x2, y2;
+
+    // Input line coordinates from user
+    cout << "Enter the starting point (x1, y1): ";
+    cin >> x1 >> y1;
+    cout << "Enter the ending point (x2, y2): ";
+    cin >> x2 >> y2;
+
+    // Call DDA function to draw the line
+    DDA(x1, y1, x2, y2);
+
+    // Close the graphics window on key press
+    getch();
+    closegraph();
+
+    return 0;
+}
+

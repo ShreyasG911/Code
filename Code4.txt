@@ -1,0 +1,44 @@
+#include<iostream>
+#include<graphics.h>
+#include<cmath>  // For cos() and sin()
+using namespace std;
+
+void drawCircle(int xc, int yc, int r) {
+    float theta;     // Angle in radians
+    int x, y;
+
+    // Loop over angle theta from 0 to 360 degrees (2*PI radians)
+    for (theta = 0; theta <= 360; theta += 0.1) {
+        // Convert angle from degrees to radians
+        float radian = theta * (M_PI / 180.0);
+
+        // Calculate the x and y points using trigonometric functions
+        x = xc + r * cos(radian);
+        y = yc + r * sin(radian);
+
+        // Plot the calculated point on the graphics window
+        putpixel(x, y, WHITE);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int xc, yc, r;
+
+    // Input center and radius of the circle
+    cout << "Enter the center of the circle (xc, yc): ";
+    cin >> xc >> yc;
+    cout << "Enter the radius of the circle: ";
+    cin >> r;
+
+    // Draw the circle using trigonometric functions
+    drawCircle(xc, yc, r);
+
+    // Wait for a key press to close the graphics window
+    getch();
+    closegraph();
+
+    return 0;
+}

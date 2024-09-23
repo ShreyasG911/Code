@@ -1,0 +1,61 @@
+#include<iostream>
+#include<graphics.h>
+using namespace std;
+
+// Function to plot all eight symmetrical points of the circle
+void plotCirclePoints(int xc, int yc, int x, int y) {
+    putpixel(xc + x, yc + y, WHITE); // Octant 1
+    putpixel(xc - x, yc + y, WHITE); // Octant 2
+    putpixel(xc + x, yc - y, WHITE); // Octant 3
+    putpixel(xc - x, yc - y, WHITE); // Octant 4
+    putpixel(xc + y, yc + x, WHITE); // Octant 5
+    putpixel(xc - y, yc + x, WHITE); // Octant 6
+    putpixel(xc + y, yc - x, WHITE); // Octant 7
+    putpixel(xc - y, yc - x, WHITE); // Octant 8
+}
+
+void bresenhamCircle(int xc, int yc, int r) {
+    int x = 0, y = r;
+    int d = 3 - 2 * r; // Initial decision parameter
+
+    // Plot the initial points
+    plotCirclePoints(xc, yc, x, y);
+
+    // Loop until x is greater than y
+    while (x <= y) {
+        x++;
+
+        // Update decision parameter and calculate new points
+        if (d < 0) {
+            d = d + 4 * x + 6;
+        } else {
+            y--;
+            d = d + 4 * (x - y) + 10;
+        }
+
+        // Plot all symmetrical points of the circle
+        plotCirclePoints(xc, yc, x, y);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int xc, yc, r;
+
+    // Input the center and radius of the circle
+    cout << "Enter the center of the circle (xc, yc): ";
+    cin >> xc >> yc;
+    cout << "Enter the radius of the circle: ";
+    cin >> r;
+
+    // Call the function to draw the circle using Bresenham's algorithm
+    bresenhamCircle(xc, yc, r);
+
+    // Wait for a key press to close the graphics window
+    getch();
+    closegraph();
+
+    return 0;
+}

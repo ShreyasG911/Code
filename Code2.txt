@@ -1,0 +1,53 @@
+#include <graphics.h>
+#include <iostream>
+#include <cmath> // For cos() and sin() functions
+using namespace std;
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    float x1, y1, x2, y2, x, y, k;
+    int i = 0, val, r;
+
+    // Input the radius of the circle
+    cout << "Enter the radius of the circle: ";
+    cin >> r;
+
+    // Initial values for the starting point of the circle
+    x1 = r * cos(0);
+    y1 = r * sin(0);
+
+    // Set the initial point for the circle
+    x = x1;
+    y = y1;
+
+    // Initialize t and loop to calculate i based on radius
+    i = 0;
+    do {
+        val = pow(2, i);
+        i++;
+    } while (val < r);
+
+    // Calculate the step size 'k' using the DDA-like algorithm
+    k = 1 / pow(2, i - 1);
+
+    // Loop to draw the circle using parametric equation
+    do {
+        x2 = x1 + y1 * k;   // Parametric equation for circle
+        y2 = y1 - x1 * k;   // Parametric equation for circle
+
+        // Plot the pixel at calculated (x2, y2) coordinates
+        putpixel(200 + x2, 200 + y2, WHITE);  // Circle centered at (200, 200)
+
+        // Update the values for the next iteration
+        x1 = x2;
+        y1 = y2;
+
+    } while ((y1 - y) > k || (x - x1) > k);  // Condition to stop when the circle is complete
+
+    delay(7000);  // Delay to see the drawn circle
+    closegraph(); // Close the graphics window
+
+    return 0;
+}

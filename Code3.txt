@@ -1,0 +1,64 @@
+#include<iostream>
+#include<graphics.h>
+using namespace std;
+
+void bresenhamLine(int x1, int y1, int x2, int y2) {
+    int dx = abs(x2 - x1);  // Calculate the difference in x
+    int dy = abs(y2 - y1);  // Calculate the difference in y
+    int p = 2 * dy - dx;    // Initial decision parameter
+
+    int x = x1, y = y1;     // Starting point
+    int xEnd;
+
+    // Determine which point to start drawing the line
+    if (x1 > x2) {
+        x = x2;
+        y = y2;
+        xEnd = x1;
+    } else {
+        x = x1;
+        y = y1;
+        xEnd = x2;
+    }
+
+    // Draw the first pixel
+    putpixel(x, y, WHITE);
+
+    // Iterate through the points from start to end
+    while (x < xEnd) {
+        x++;  // Move one pixel to the right
+
+        // Update y based on the decision parameter
+        if (p < 0) {
+            p = p + 2 * dy;
+        } else {
+            y++;
+            p = p + 2 * (dy - dx);
+        }
+
+        // Plot the pixel at the new point (x, y)
+        putpixel(x, y, WHITE);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x1, y1, x2, y2;
+
+    // Input the starting and ending points of the line
+    cout << "Enter the starting point of the line (x1, y1): ";
+    cin >> x1 >> y1;
+    cout << "Enter the ending point of the line (x2, y2): ";
+    cin >> x2 >> y2;
+
+    // Call the function to draw the line using Bresenham's algorithm
+    bresenhamLine(x1, y1, x2, y2);
+
+    // Wait for a key press to close the graphics window
+    getch();
+    closegraph();
+
+    return 0;
+}

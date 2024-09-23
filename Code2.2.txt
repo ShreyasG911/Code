@@ -1,0 +1,59 @@
+#include<iostream>
+#include<graphics.h>  // Include the graphics library
+#include<cmath>       // Include for math functions like sqrt
+using namespace std;
+
+// Function to draw a circle using the DDA algorithm
+void drawCircle(int xc, int yc, int r) {
+    float x = 0;
+    float y = r;
+    float d = 3 - 2 * r;  // Initial decision parameter
+    
+    // Plot initial points
+    while (x <= y) {
+        // Plot the symmetric points in all octants
+        putpixel(xc + x, yc + y, WHITE);
+        putpixel(xc - x, yc + y, WHITE);
+        putpixel(xc + x, yc - y, WHITE);
+        putpixel(xc - x, yc - y, WHITE);
+        putpixel(xc + y, yc + x, WHITE);
+        putpixel(xc - y, yc + x, WHITE);
+        putpixel(xc + y, yc - x, WHITE);
+        putpixel(xc - y, yc - x, WHITE);
+
+        // Delay for visual effect
+        delay(20);
+
+        // Update decision parameter and coordinates
+        if (d < 0) {
+            d = d + 4 * x + 6;
+        } else {
+            d = d + 4 * (x - y) + 10;
+            y--;
+        }
+        x++;
+    }
+}
+
+int main() {
+    // Initialize graphics mode
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int xc, yc, r;
+
+    // Input center and radius from user
+    cout << "Enter the center of the circle (xc, yc): ";
+    cin >> xc >> yc;
+    cout << "Enter the radius of the circle: ";
+    cin >> r;
+
+    // Call the function to draw the circle
+    drawCircle(xc, yc, r);
+
+    // Close the graphics window on key press
+    getch();
+    closegraph();
+
+    return 0;
+}
