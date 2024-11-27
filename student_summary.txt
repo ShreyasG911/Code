@@ -1,4 +1,0 @@
-Number of students: 7
-Average age of students: 21.00
-Oldest student: David with age 23
-Youngest student: Charlie with age 19
