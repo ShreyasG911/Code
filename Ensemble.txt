@@ -1,0 +1,70 @@
+# ---- Import Libraries ----
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# ---- Step 1: Create Synthetic Dataset ----
+# Predict house price based on area, rooms, and age
+data = {
+    'Area': [1000, 1500, 1800, 2400, 3000, 3500, 4000, 4200, 5000, 5500],
+    'Rooms': [2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+    'Age': [20, 15, 10, 8, 5, 3, 2, 1, 1, 0],
+    'Price': [150000, 200000, 250000, 320000, 400000, 450000, 480000, 500000, 600000, 650000]
+}
+
+df = pd.DataFrame(data)
+print("Dataset:\n", df, "\n")
+
+# ---- Step 2: Features and Target ----
+X = df[['Area', 'Rooms', 'Age']]
+y = df['Price']
+
+# ---- Step 3: Preprocessing (Scaling) ----
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# ---- Step 4: Train-Test Split ----
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.3, random_state=42
+)
+
+# ---- Step 5: Ensemble Regression Model ----
+model = GradientBoostingRegressor(
+    n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42
+)
+model.fit(X_train, y_train)
+
+# ---- Step 6: Predictions ----
+y_pred = model.predict(X_test)
+
+# ---- Step 7: Evaluation ----
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("✅ Model Evaluation:")
+print("Mean Absolute Error:", round(mae, 2))
+print("Mean Squared Error:", round(mse, 2))
+print("R² Score:", round(r2, 3))
+
+# ---- Step 8: Feature Importance ----
+plt.figure(figsize=(6, 4))
+sns.barplot(x=model.feature_importances_, y=['Area', 'Rooms', 'Age'], palette="coolwarm")
+plt.title("Feature Importance (Gradient Boosting Regression)")
+plt.xlabel("Importance Score")
+plt.ylabel("Feature")
+plt.show()
+
+# ---- Step 9: Actual vs Predicted Visualization ----
+plt.figure(figsize=(6, 4))
+plt.scatter(y_test, y_pred, color='teal', edgecolor='k')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)
+plt.title("Actual vs Predicted House Prices")
+plt.xlabel("Actual Price")
+plt.ylabel("Predicted Price")
+plt.show()

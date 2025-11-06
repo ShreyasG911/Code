@@ -1,0 +1,55 @@
+# ---- Import Libraries ----
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+
+# ---- Step 1: Create a Modified Dataset ----
+# Slightly mixed data to make accuracy < 1.0
+data = {
+    'Age': [22, 25, 47, 52, 46, 56, 23, 55, 40, 60, 28, 35, 45, 50, 33],
+    'Income': [15000, 29000, 48000, 60000, 52000, 72000, 18000, 70000, 45000, 80000,
+               31000, 40000, 51000, 58000, 35000],
+    'Buys':   [0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0]
+}
+
+df = pd.DataFrame(data)
+print("Dataset:\n", df, "\n")
+
+# ---- Step 2: Features and Target ----
+X = df[['Age', 'Income']]
+y = df['Buys']
+
+# ---- Step 3: Split into Train and Test ----
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# ---- Step 4: Create AdaBoost Model ----
+base_tree = DecisionTreeClassifier(max_depth=1)
+model = AdaBoostClassifier(
+    estimator=base_tree,
+    n_estimators=30,
+    learning_rate=0.6,
+    random_state=42
+)
+
+# ---- Step 5: Train the Model ----
+model.fit(X_train, y_train)
+
+# ---- Step 6: Make Predictions ----
+y_pred = model.predict(X_test)
+
+# ---- Step 7: Evaluate Performance ----
+accuracy = round(accuracy_score(y_test, y_pred), 2)
+print("Accuracy:", accuracy)
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# ---- Step 8: Feature Importance ----
+plt.barh(['Age', 'Income'], model.feature_importances_, color='lightgreen')
+plt.title("Feature Importance (AdaBoost)")
+plt.xlabel("Importance")
+plt.ylabel("Feature")
+plt.show()

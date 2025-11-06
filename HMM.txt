@@ -1,0 +1,47 @@
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from hmmlearn import hmm
+
+# --- Model setup ---
+states = ['Rainy', 'Sunny']
+obs = ['Dry', 'Wet']
+A = np.array([[0.7, 0.3],
+              [0.4, 0.6]])    # Transition
+B = np.array([[0.1, 0.9],
+              [0.8, 0.2]])    # Emission
+pi = np.array([0.6, 0.4])     # Initial
+O = np.array([0, 1, 1, 0, 1, 0])  # Observations (0=Dry, 1=Wet)
+
+# --- Forward Algorithm ---
+N, T = len(states), len(O)
+alpha = np.zeros((T, N))
+alpha[0] = pi * B[:, O[0]]
+for t in range(1, T):
+    for j in range(N):
+        alpha[t, j] = np.sum(alpha[t-1] * A[:, j]) * B[j, O[t]]
+P_obs = np.sum(alpha[-1])
+print("Forward Probability (P(O)) =", round(P_obs, 5))
+
+# --- Viterbi Algorithm using hmmlearn ---
+model = hmm.CategoricalHMM(n_components=2, n_iter=100, init_params='')
+model.startprob_ = pi
+model.transmat_ = A
+model.emissionprob_ = B
+
+logprob, seq = model.decode(O.reshape(-1, 1), algorithm="viterbi")
+decoded_states = [states[i] for i in seq]
+print("Viterbi Most Likely States:", decoded_states)
+print("Viterbi Log Probability:", round(logprob, 5))
+
+# --- Visualization ---
+sns.set(style="whitegrid")
+
+# Sequence plot
+plt.figure(figsize=(7, 4))
+plt.plot(range(len(O)), seq, marker='o', color='crimson')
+plt.yticks([0, 1], states)
+plt.title("Viterbi Most Likely Hidden States")
+plt.xlabel("Time Step")
+plt.ylabel("State")
+plt.show()

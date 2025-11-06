@@ -1,0 +1,45 @@
+# ---- Import Required Libraries ----
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
+import pandas as pd
+
+# ---- Step 1: Load Dataset ----
+iris = load_iris()
+X = iris.data   # Features
+y = iris.target  # Target (3 classes)
+
+# ---- Step 2: Data Preprocessing ----
+# Standardize features for better model performance
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# ---- Step 3: Split Dataset into Train & Test ----
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+# ---- Step 4: Build Classification Model ----
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+# ---- Step 5: Make Predictions ----
+y_pred = model.predict(X_test)
+
+# ---- Step 6: Model Evaluation ----
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
+f1 = f1_score(y_test, y_pred, average='weighted')
+cm = confusion_matrix(y_test, y_pred)
+
+# ---- Step 7: Display Results ----
+print("=== Logistic Regression Classification Results ===")
+print(f"Accuracy:  {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall:    {recall:.4f}")
+print(f"F1-Score:  {f1:.4f}")
+print("\nConfusion Matrix:\n", cm)
+print("\nClassification Report:\n", classification_report(y_test, y_pred))

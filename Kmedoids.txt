@@ -1,0 +1,30 @@
+
+# ---- Import Required Libraries ----
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+from sklearn_extra.cluster import KMedoids
+
+# ---- Step 1: Load the Iris Dataset ----
+iris = load_iris()
+data = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# ---- Step 2: Standardize the Data ----
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(data)
+
+# ---- Step 3: Apply K-Medoids Clustering ----
+kmedoids = KMedoids(n_clusters=3, random_state=42)
+kmedoids.fit(scaled_data)
+
+# Store cluster labels
+data['KMedoid_Cluster'] = kmedoids.labels_
+
+# ---- Step 4: Visualization ----
+plt.scatter(data.iloc[:, 0], data.iloc[:, 1], c=data['KMedoid_Cluster'], cmap='plasma')
+plt.title("K-Medoids Clustering on Iris Dataset")
+plt.xlabel("Sepal Length (scaled)")
+plt.ylabel("Sepal Width (scaled)")
+plt.grid(True)
+plt.show()

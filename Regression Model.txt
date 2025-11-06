@@ -1,0 +1,55 @@
+# ---- Import Required Libraries ----
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# ---- Step 1: Create a Simple Dataset ----
+data = {
+    'Area (sq ft)': [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500],
+    'Price ($)': [150000, 200000, 240000, 280000, 310000, 340000, 370000, 400000]
+}
+
+df = pd.DataFrame(data)
+print("Dataset:\n", df, "\n")
+
+# ---- Step 2: Preprocessing ----
+X = df[['Area (sq ft)']]
+y = df['Price ($)']
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# ---- Step 3: Split Data ----
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.25, random_state=42)
+
+# ---- Step 4: Train Model ----
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# ---- Step 5: Predict ----
+y_pred = model.predict(X_test)
+
+# ---- Step 6: Evaluation ----
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print("Regression Model Evaluation:")
+print(" Mean Absolute Error (MAE):", round(mae, 2))
+print(" Mean Squared Error (MSE):", round(mse, 2))
+print(" Root Mean Squared Error (RMSE):", round(rmse, 2))
+print(" R² Score:", round(r2, 3))
+
+# ---- Step 7: Visualization ----
+plt.scatter(X, y, color='blue', label='Actual Data')
+plt.plot(X, model.predict(X_scaled), color='red', linewidth=2, label='Regression Line')
+plt.title("Linear Regression: House Price Prediction")
+plt.xlabel("Area (sq ft)")
+plt.ylabel("Price ($)")
+plt.legend()
+plt.show()

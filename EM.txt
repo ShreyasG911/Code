@@ -1,0 +1,62 @@
+# Importing required libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.impute import SimpleImputer
+from sklearn.mixture import GaussianMixture
+
+# ---- Step 1: Create sample patient health dataset ----
+np.random.seed(42)
+data = {
+    'Age': [25, 30, 35, np.nan, 50, 45, np.nan, 60],
+    'BloodPressure': [120, 130, np.nan, 110, 140, np.nan, 135, 150],
+    'HeartRate': [72, 75, 70, np.nan, 80, 85, 78, np.nan]
+}
+
+df = pd.DataFrame(data)
+print("Original Data (with missing values):\n", df)
+
+# ---- Step 2: Handle missing values (initial mean imputation) ----
+imputer = SimpleImputer(strategy='mean')
+X_init = imputer.fit_transform(df)
+
+# ---- Step 3: Apply Expectation-Maximization using Gaussian Mixture ----
+gmm = GaussianMixture(n_components=2, max_iter=100, random_state=42)
+gmm.fit(X_init)
+
+# Replace missing values with EM-based predictions
+X_completed = X_init.copy()
+missing_mask = df.isnull().values
+
+for i in range(len(df)):
+    if missing_mask[i].any():
+        # Approximation: replace with sampled mean from GMM
+        X_completed[i] = gmm.sample(1)[0]
+
+# ---- Step 4: Convert back to DataFrame ----
+completed_df = pd.DataFrame(X_completed, columns=df.columns)
+print("\nData after EM Imputation:\n", completed_df.round(2))
+
+# ---- Step 5: Visualization using matplotlib ----
+plt.figure(figsize=(12, 5))
+
+# Plot before imputation
+plt.subplot(1, 2, 1)
+plt.title("Before Imputation")
+plt.plot(df['Age'], label='Age', marker='o')
+plt.plot(df['BloodPressure'], label='BloodPressure', marker='o')
+plt.plot(df['HeartRate'], label='HeartRate', marker='o')
+plt.legend()
+plt.grid(True)
+
+# Plot after EM imputation
+plt.subplot(1, 2, 2)
+plt.title("After EM Imputation")
+plt.plot(completed_df['Age'], label='Age', marker='o')
+plt.plot(completed_df['BloodPressure'], label='BloodPressure', marker='o')
+plt.plot(completed_df['HeartRate'], label='HeartRate', marker='o')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
